@@ -4,20 +4,28 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "lint": "yarn run eslint --ext jsx .",
+    "lint": "yarn run eslint --ext .jsx,.tsx,.js .",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
+    "@octokit/graphql": "^4.3.1",
+    "@types/d3": "^5.7.2",
+    "d3": "^5.15.1",
+    "d3fc-webgl": "^0.0.5",
     "next": "^9.3.4",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "swr": "^0.2.0"
   },
   "devDependencies": {
+    "@types/node": "^13.11.1",
+    "@types/react": "^16.9.33",
     "@typescript-eslint/eslint-plugin": "^2.27.0",
     "@typescript-eslint/parser": "^2.27.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
+    "eslint-import-resolver-typescript": "^2.0.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.19.0",
