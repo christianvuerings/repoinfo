@@ -4,11 +4,29 @@ import * as d3 from "d3";
 
 async function fetcher<T>(url: string): Promise<T> {
   const r = await fetch(url);
-  return await r.json();
+  const json = await r.json();
+
+  if (json && json.error) {
+    throw new Error(json.error);
+  }
+
+  return json;
 }
 
-export default function BaseInfo({ repo }: { repo: string }): JSX.Element {
-  const { data, error } = useSWR<{
+function pathQuery(path: string, query: { [key: string]: string }): string {
+  const params = new URLSearchParams(query);
+  return `${path}?${params}`;
+}
+
+export default function BaseInfo({
+  repo,
+  owner
+}: {
+  repo: string;
+  owner: string;
+}): JSX.Element {
+  console.log(repo, owner);
+  const { data, error = "" } = useSWR<{
     commits: {
       author: {
         email: string;
@@ -18,9 +36,11 @@ export default function BaseInfo({ repo }: { repo: string }): JSX.Element {
       message: string;
       oid: string;
     }[];
-  }>("/api/commits", fetcher, {
+  }>(pathQuery("/api/commits", { repo, owner }), fetcher, {
     revalidateOnFocus: false
   });
+
+  console.log(data, error);
 
   const commitsPerWeekContainer = useRef(null);
 
@@ -163,9 +183,9 @@ export default function BaseInfo({ repo }: { repo: string }): JSX.Element {
 
   return (
     <>
-      {error && <div>{error}</div>}
-      {!data && <div>Loading</div>}
-      {data && (
+      {error && <div>{error.message}</div>}
+      {!error && !data && <div>Loading</div>}
+      {!error && data && (
         <div>
           <svg className="chart" ref={commitsPerWeekContainer}></svg>
           <style jsx>{`

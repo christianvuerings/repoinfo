@@ -1,15 +1,29 @@
 import React, { useState } from "react";
+import { useDebounce } from "react-use";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import BaseInfo from "../components/BaseInfo";
 import Head from "../components/Head";
 import Logo from "../components/Logo";
 import Links from "../components/Links";
+import queryToRepoOwner from "../utils/queryToRepoOwner";
 
 const Info = (): JSX.Element => {
   const router = useRouter();
 
   const [query, setQuery] = useState(String(router.query.query || ""));
+  const [repo, setRepo] = useState("");
+  const [owner, setOwner] = useState("");
+
+  useDebounce(
+    () => {
+      const response = queryToRepoOwner(query);
+      setRepo((response && response.repo) || "");
+      setOwner((response && response.owner) || "");
+    },
+    1000,
+    [query]
+  );
 
   const handleInputUpdate = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setQuery(e.target.value);
@@ -46,7 +60,9 @@ const Info = (): JSX.Element => {
         </form>
       </header>
       <main>
-        <BaseInfo repo="repo" />
+        <div>
+          {repo && owner ? <BaseInfo repo={repo} owner={owner} /> : null}
+        </div>
       </main>
 
       <Links />
