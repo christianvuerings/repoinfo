@@ -18,14 +18,13 @@ function pathQuery(path: string, query: { [key: string]: string }): string {
   return `${path}?${params}`;
 }
 
-export default function BaseInfo({
+export default function CommitsPerWeek({
   repo,
   owner
 }: {
   repo: string;
   owner: string;
 }): JSX.Element {
-  console.log(repo, owner);
   const { data, error = "" } = useSWR<{
     commits: {
       author: {
@@ -39,8 +38,6 @@ export default function BaseInfo({
   }>(pathQuery("/api/commits", { repo, owner }), fetcher, {
     revalidateOnFocus: false
   });
-
-  console.log(data, error);
 
   const commitsPerWeekContainer = useRef(null);
 
@@ -99,6 +96,7 @@ export default function BaseInfo({
 
       const margin = { top: 30, right: 0, bottom: 80, left: 40 };
 
+      d3.selectAll("svg.commitsPerMonth > *").remove();
       const svg = d3
         .select(commitsPerWeekContainer.current)
         .attr("viewBox", `0, 0, ${width}, ${height}`);
@@ -187,12 +185,11 @@ export default function BaseInfo({
       {!error && !data && <div>Loading</div>}
       {!error && data && (
         <div>
-          <svg className="chart" ref={commitsPerWeekContainer}></svg>
+          <svg className="commitsPerMonth" ref={commitsPerWeekContainer}></svg>
           <style jsx>{`
             .chart {
               width: 100%;
               height: 500px;
-              background: rgba(0, 0, 0, 0.3);
               font-size: 16px;
             }
           `}</style>

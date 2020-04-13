@@ -1,0 +1,5 @@
+{
+  "env": {
+    "GITHUB_PERSONAL_TOKEN": "@github_personal_token"
+  }
+}

@@ -1,7 +1,8 @@
 import { graphql } from "@octokit/graphql";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const accessToken = "52040c832414c5f784d2cc6a8269305210e6c6c2";
+const accessToken = process.env.GITHUB_PERSONAL_TOKEN;
+console.log("accessToken", accessToken);
 
 const graphqlWithAuth = graphql.defaults({
   headers: {
@@ -72,7 +73,7 @@ export default async (
   try {
     while (hasNextPage) {
       const commitQuery = commitsQuery({ cursor });
-      console.log(`request : ${count}`);
+      console.log(`API: Commits ${owner}/${repo} : ${count}`);
       // eslint-disable-next-line no-await-in-loop
       const commitResult = await graphqlWithAuth(commitQuery, {
         owner,

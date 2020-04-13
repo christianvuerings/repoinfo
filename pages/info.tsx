@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useDebounce } from "react-use";
 import { useRouter } from "next/router";
-import Link from "next/link";
-import BaseInfo from "../components/BaseInfo";
+import CommitsPerMonth from "../components/CommitsPerMonth";
 import Head from "../components/Head";
-import Logo from "../components/Logo";
+import Link from "next/link";
 import Links from "../components/Links";
+import Logo from "../components/Logo";
 import queryToRepoOwner from "../utils/queryToRepoOwner";
+import ReleasesPerMonth from "../components/ReleasesPerMonth";
 
 const Info = (): JSX.Element => {
   const router = useRouter();
@@ -17,6 +18,10 @@ const Info = (): JSX.Element => {
 
   useDebounce(
     () => {
+      if (query) {
+        const params = new URLSearchParams({ query });
+        router.push(`/info?${params}`);
+      }
       const response = queryToRepoOwner(query);
       setRepo((response && response.repo) || "");
       setOwner((response && response.owner) || "");
@@ -61,7 +66,15 @@ const Info = (): JSX.Element => {
       </header>
       <main>
         <div>
-          {repo && owner ? <BaseInfo repo={repo} owner={owner} /> : null}
+          {repo && owner ? (
+            <div className="info">
+              <h2># Commits per Month</h2>
+              <CommitsPerMonth repo={repo} owner={owner} />
+
+              <h2># Releases per Month</h2>
+              <ReleasesPerMonth repo={repo} owner={owner} />
+            </div>
+          ) : null}
         </div>
       </main>
 
@@ -135,6 +148,14 @@ const Info = (): JSX.Element => {
           }
           .button:hover {
             cursor: pointer;
+          }
+          .info {
+            background: rgba(0, 0, 0, 0.2);
+          }
+          .info h2 {
+            font-size: 40px;
+            padding: 50px 10px 10px;
+            text-align: center;
           }
         `}
       </style>
